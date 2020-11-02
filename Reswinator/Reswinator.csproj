@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Codevoid.Utilities.Reswinator</RootNamespace>
+		<AssemblyName>Codevoid.Utilities.Reswinator</AssemblyName>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<LangVersion>10.0</LangVersion>
+		<ImplicitUsings>true</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Using Include="Microsoft.CodeAnalysis" />
+	</ItemGroup>
+</Project>
