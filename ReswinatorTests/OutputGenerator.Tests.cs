@@ -2,77 +2,77 @@
 
 namespace Codevoid.Tests.Reswinator;
 
-public class OutputGeneratorTests
+public class OutputWriterTests
 {
-    private OutputGenerator generator = new OutputGenerator();
+    private OutputWriter writer = new OutputWriter();
 
     [Fact]
     public void GettingOutputWithoutWritingAnythingGivesEmptyString()
     {
-        Assert.Empty(this.generator.GetOutput());
+        Assert.Empty(this.writer.GetOutput());
     }
 
     [Fact]
     public void IndentingButNotWritingReturnsEmptyString()
     {
-        this.generator.Indent();
-        Assert.Empty(this.generator.GetOutput());
+        this.writer.Indent();
+        Assert.Empty(this.writer.GetOutput());
     }
 
     [Fact]
     public void DindentingWithNoIndentThrowsException()
     {
-        Assert.Throws<NotSupportedException>(() => this.generator.Dindent());
+        Assert.Throws<NotSupportedException>(() => this.writer.Dindent());
     }
 
     [Fact]
     public void WritingLineAddsToOutput()
     {
-        this.generator.WriteLine("Hello");
-        Assert.Equal("Hello\n", this.generator.GetOutput());
+        this.writer.WriteLine("Hello");
+        Assert.Equal("Hello\n", this.writer.GetOutput());
     }
 
     [Fact]
     public void WritingLineWithIndentIncludesIndentBeforeWrittenLine()
     {
-        this.generator.Indent();
-        this.generator.WriteLine("Hello");
-        Assert.Equal("    Hello\n", this.generator.GetOutput());
+        this.writer.Indent();
+        this.writer.WriteLine("Hello");
+        Assert.Equal("    Hello\n", this.writer.GetOutput());
     }
 
     [Fact]
     public void WritingLineWithTwoIndentLevelsIncludesIndentBeforeWrittenLine()
     {
-        this.generator.Indent();
-        this.generator.Indent();
-        this.generator.WriteLine("Hello");
-        Assert.Equal("        Hello\n", this.generator.GetOutput());
+        this.writer.Indent();
+        this.writer.Indent();
+        this.writer.WriteLine("Hello");
+        Assert.Equal("        Hello\n", this.writer.GetOutput());
     }
 
     [Fact]
     public void IndentLevevelChangesInterleavedWithWritesAreRespected()
     {
-        this.generator.Indent();
-        this.generator.Indent();
-        this.generator.WriteLine("Hello");
-        this.generator.Dindent();
-        this.generator.Dindent();
-        this.generator.WriteLine("World");
-        Assert.Equal("        Hello\nWorld\n", this.generator.GetOutput());
+        this.writer.Indent();
+        this.writer.Indent();
+        this.writer.WriteLine("Hello");
+        this.writer.Dindent();
+        this.writer.Dindent();
+        this.writer.WriteLine("World");
+        Assert.Equal("        Hello\nWorld\n", this.writer.GetOutput());
     }
 
     [Fact]
     public void WritingNewLineOnlyAddsOnlyNewLineToOutput()
     {
-        this.generator.NewLine();
-        Assert.Equal("\n", this.generator.GetOutput());
+        this.writer.NewLine();
+        Assert.Equal("\n", this.writer.GetOutput());
     }
 
     [Fact]
     public void WritingNewLineWithIndentOnlyAddsOnlyNewLineToOutput()
     {
-        this.generator.Indent();
-        this.generator.NewLine();
-        Assert.Equal("\n", this.generator.GetOutput());
+        this.writer.Indent();
+        this.writer.NewLine();
+        Assert.Equal("\n", this.writer.GetOutput());
     }
 }

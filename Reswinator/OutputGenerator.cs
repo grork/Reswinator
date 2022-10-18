@@ -2,7 +2,7 @@
 
 namespace Codevoid.Utilities.Reswinator;
 
-public class OutputGenerator
+public class OutputWriter
 {
     private StringBuilder builder = new StringBuilder();
     private uint indentLevel = 0;
