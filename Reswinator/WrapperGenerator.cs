@@ -3,6 +3,12 @@ using System.Xml;
 
 namespace Codevoid.Utilities.Reswinator;
 
+internal enum NullableState
+{
+    Enabled,
+    Disabled
+}
+
 /// <summary>
 /// Generates source code to access resources in a supplied ResW content
 /// </summary>
@@ -24,8 +30,9 @@ internal class WrapperGenerator
     private readonly string accessModifier = "internal";
     private readonly string selfFullyQualifiedTypeName = typeof(WrapperGenerator).FullName;
     private readonly string selfVersion = typeof(WrapperGenerator).Assembly.GetName().Version.ToString();
+    private readonly string nullableSuffix;
 
-    internal WrapperGenerator(string targetNamespace, string? version = null)
+    internal WrapperGenerator(string targetNamespace, string? version = null, NullableState nullableState = NullableState.Enabled)
     {
         this.fullyQualifiedTargetNamespace = targetNamespace;
 
@@ -35,6 +42,8 @@ internal class WrapperGenerator
         {
             selfVersion = version!;
         }
+
+        this.nullableSuffix = (nullableState == NullableState.Enabled) ? "?" : "";
     }
 
     /// <summary>
@@ -197,7 +206,7 @@ internal class WrapperGenerator
     private void WriteResourceLoaderLazyProperty(string resourceMapName)
     {
         // Resource Loader lazy field
-        this.writer.WriteLine($"private static {FQ_RESOURCE_LOADER}? resourceLoader;");
+        this.writer.WriteLine($"private static {FQ_RESOURCE_LOADER}{this.nullableSuffix} resourceLoader;");
         this.writer.NewLine();
 
         // Resource Loader property declaration

@@ -54,6 +54,16 @@ public class WrapperGeneratorTests
     }
 
     [Fact]
+    public void GeneratingWithSingleItemNullableDisabledMatchesExpectedOutput()
+    {
+        var alternativeGenerator = new WrapperGenerator("Codevoid.Test.Generated.NullableDisabled", "0.0.0.0", NullableState.Disabled);
+        var wrapperSource = alternativeGenerator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "Resources");
+        this.WriteOutputForTest(wrapperSource);
+        var hashOfContents = this.HashContents(wrapperSource);
+        this.AssertHashesMatch("BC498448988C4D5C46A8BEA8618357BDFB300880C43472B0B369C644F5139D6B", hashOfContents);
+    }
+
+    [Fact]
     public void GeneratingWithSingleItemMatchesExpectedOutputNonDefaultResourceMap()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "CustomResourceMap");
