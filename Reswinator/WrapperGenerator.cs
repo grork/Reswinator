@@ -9,25 +9,38 @@ namespace Codevoid.Utilities.Reswinator;
 internal class WrapperGenerator
 {
     private static readonly string FQ_RESOURCE_LOADER = "global::Microsoft.Windows.ApplicationModel.Resources.ResourceLoader";
-    private OutputWriter writer = new OutputWriter();
-    private string fullyQualifiedTargetNamespace = "Codevoid.Sample";
-    private string targetClassName = "Resources";
-    private string accessModifier = "internal";
+    private static readonly string EDITOR_BROWSER_ATTRIBUTE = "[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]";
+    private readonly OutputWriter writer = new OutputWriter();
+    private readonly string fullyQualifiedTargetNamespace;
+    private readonly string accessModifier = "internal";
+    private readonly string selfFullyQualifiedTypeName = typeof(WrapperGenerator).FullName;
+    private readonly string selfVersion;
+
+    internal WrapperGenerator(string targetNamespace, string? version = null)
+    {
+        this.fullyQualifiedTargetNamespace = targetNamespace;
+        if(String.IsNullOrEmpty(version))
+        {
+            version = typeof(WrapperGenerator).Assembly.GetName().Version.ToString();
+        }
+
+        selfVersion = version!;
+    }
 
     /// <summary>
     /// For the supplied ResW contents, generates an accessor class that
     /// provides static, strongly typed access to the resources in that ResW
     /// </summary>
-    /// <param name="contents">The contents of the ResW have to be wrapped</param>
-    /// <param name="assumedResourceMap">
+    /// <param name="reswContents">The contents of the ResW have to be wrapped</param>
+    /// <param name="resourceMapName">
     /// The assumed name of the resource map that will be be read from at
     /// runtime
     /// </param>
     /// <returns>Source code for the wrapper</returns>
-    internal string GenerateWrapperForResw(string contents, string assumedResourceMap)
+    internal string GenerateWrapperForResw(string reswContents, string resourceMapName = "Resources")
     {
         var reswXml = new XmlDocument();
-        reswXml.LoadXml(contents);
+        reswXml.LoadXml(reswContents);
 
         if(reswXml.DocumentElement == null)
         {
@@ -41,7 +54,7 @@ internal class WrapperGenerator
         }
 
         this.StartNamespace();
-        this.StartClass();
+        this.StartClass(resourceMapName);
 
         this.writer.NewLine();
 
@@ -70,14 +83,13 @@ internal class WrapperGenerator
         this.writer.Indent();
     }
 
-    private void StartClass()
+    private void StartClass(string targetClassName)
     {
-
         // Attributes to assist the debugger
-        this.writer.WriteLine("[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"MY NAMESPACE OF STUFF\", \"15.1.0.0\")]");
+        this.writer.WriteLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{this.selfFullyQualifiedTypeName}\", \"{this.selfVersion}\")]");
         this.writer.WriteLine("[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]");
         this.writer.WriteLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]");
-        this.writer.WriteLine($"{this.accessModifier} static sealed class {this.targetClassName} {{");
+        this.writer.WriteLine($"{this.accessModifier} static sealed class {targetClassName} {{");
         this.writer.Indent();
 
         // Resource Loader lazy field
@@ -85,6 +97,7 @@ internal class WrapperGenerator
         this.writer.NewLine();
 
         // Resource Loader property declaration
+        this.writer.WriteLine(EDITOR_BROWSER_ATTRIBUTE);
         this.writer.WriteLine($"private static {FQ_RESOURCE_LOADER} Loader {{");
         this.writer.Indent();
 
@@ -95,8 +108,9 @@ internal class WrapperGenerator
         // Resource Loader null check, instantiation, and return
         this.writer.WriteLine("if (resourceLoader is null) {");
         this.writer.Indent();
-        
-        this.writer.WriteLine($"resourceLoader = new {FQ_RESOURCE_LOADER}({ (targetClassName == "Resources" ? "" : $"\"{targetClassName}") });");
+
+        var isDefaultResourceMap = String.Equals(targetClassName, "Resources", StringComparison.InvariantCultureIgnoreCase);
+        this.writer.WriteLine($"resourceLoader = new {FQ_RESOURCE_LOADER}({ (isDefaultResourceMap ? "" : $"\"{targetClassName}\"") });");
         
         this.writer.Dindent();
         this.writer.WriteLine("}");
