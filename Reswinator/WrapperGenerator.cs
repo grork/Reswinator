@@ -89,7 +89,7 @@ internal class WrapperGenerator
         this.writer.WriteLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{this.selfFullyQualifiedTypeName}\", \"{this.selfVersion}\")]");
         this.writer.WriteLine("[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]");
         this.writer.WriteLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]");
-        this.writer.WriteLine($"{this.accessModifier} static sealed class {targetClassName} {{");
+        this.writer.WriteLine($"{this.accessModifier} static class {targetClassName} {{");
         this.writer.Indent();
 
         // Resource Loader lazy field

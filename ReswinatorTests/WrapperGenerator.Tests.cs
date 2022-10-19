@@ -50,7 +50,7 @@ public class WrapperGeneratorTests
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "Resources");
         this.WriteOutputForTest(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("905AED325CE975D09B5E137CCA42B3E321B5DC0983A93A662581A41021123C12", hashOfContents);
+        this.AssertHashesMatch("D623B9ABF0E3CAD20FFC984C6A004B8F5C8B93EE9FB03144BADBF7353EE09A97", hashOfContents);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class WrapperGeneratorTests
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "CustomResourceMap");
         this.WriteOutputForTest(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("8DA4C40C194C41E03A68C091E476AAD25ADE240568D76A65BCB120D9CB84270F", hashOfContents);
+        this.AssertHashesMatch("E675ADF9A7A31CFD9ECB3EF6D8B041B77319FEF2D6A7476745199A715A36D5F7", hashOfContents);
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class WrapperGeneratorTests
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
         this.WriteOutputForTest(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("3E614B7A863E4371E064B20C4B8275F2A4FC86CFD4D273CB8FDC6CED43A584E1", hashOfContents);
+        this.AssertHashesMatch("D54BC92DECCAA2212902A5DA3CD620A9DCF9CE11CE691127A8A42B17350A31B0", hashOfContents);
     }
 
     [Fact]
@@ -77,6 +77,6 @@ public class WrapperGeneratorTests
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "CustomResourceMap");
         this.WriteOutputForTest(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("75912AC7503875CF4959DB2C71D69A11B52F9B89E9F6DF571333A00E8FB56D35", hashOfContents);
+        this.AssertHashesMatch("9655316F8ACF1761EB578780D24D29A82DBD7355282C6DDC0E8F190F67BD0E2F", hashOfContents);
     }
 }
