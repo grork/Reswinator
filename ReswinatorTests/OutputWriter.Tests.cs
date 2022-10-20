@@ -1,6 +1,6 @@
 ﻿using Codevoid.Utilities.Reswinator;
 
-namespace Codevoid.Tests.Reswinator;
+namespace Codevoid.Test.Reswinator;
 
 public class OutputWriterTests
 {

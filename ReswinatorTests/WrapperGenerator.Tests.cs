@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace Codevoid.Tests.Reswinator;
+namespace Codevoid.Test.Reswinator;
 
 public class WrapperGeneratorTests
 {
