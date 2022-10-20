@@ -1,0 +1,4 @@
+﻿namespace ReswinatorTest;
+public class MyClass {
+    private string? assignedNull = null;
+}
