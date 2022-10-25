@@ -42,14 +42,27 @@ public class SampleGeneratorTests
     }
 
     [Fact]
-    public async void CanVerifyBasicCompilationWithSampleGeneratorWithNullablesEnabledReportingError()
+    public async void CanVerifyBasicCompilationWithSampleGeneratorNullablesEnabledWithNullableAnnocations()
+    {
+
+        var f = new VerifyGeneratorHelper<SampleGenerator>("SimpleSourceFile_nullable.cs.txt",
+                                                           new List<(string, string)>() { (SampleGenerator.SAMPLE_FILENAME, SampleGenerator.SAMPLE_OUTPUT) })
+        {
+            NullableOption = NullableContextOptions.Enable
+        };
+
+        await f.RunAsync();
+    }
+
+    [Fact]
+    public async void CanVerifyBasicCompilationWithSampleGeneratorWithNullablesDisabledReportingError()
     {
         var f = new VerifyGeneratorHelper<SampleGenerator>("SimpleSourceFile_nullable.cs.txt",
                                                            new List<(string, string)>() { (SampleGenerator.SAMPLE_FILENAME, SampleGenerator.SAMPLE_OUTPUT) })
         {
             ExpectedDiagnostics =
             {
-                DiagnosticResult.CompilerError("CS8632").WithSpan(3, 19, 3, 20)
+                DiagnosticResult.CompilerError("CS8632").WithSpan("SimpleSourceFile_nullable.cs", 3, 19, 3, 20)
             }
         };
         await f.RunAsync();

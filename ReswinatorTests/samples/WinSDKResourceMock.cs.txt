@@ -1,0 +1,14 @@
+namespace Microsoft.Windows.ApplicationModel.Resources
+{
+    public class ResourceLoader
+    {
+        public ResourceLoader()
+        { }
+
+        public ResourceLoader(string resourceMapName)
+        { }
+
+        public string GetString(string resourceName)
+        { return string.Empty; }
+    }
+}

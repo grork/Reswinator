@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Codevoid.Test.Reswinator;
 
@@ -30,14 +31,23 @@ internal class VerifyGeneratorHelper<TSourceGenerator> : CSharpSourceGeneratorTe
     /// </summary>
     /// <param name="inputFilePath">Souce file to compile</param>
     /// <param name="generatedSources">Generated files + content</param>
-    public VerifyGeneratorHelper(string inputFilePath, IList<(string BaseName, string Content)> generatedSources)
+    public VerifyGeneratorHelper(string inputFilePath, IEnumerable<(string BaseName, string Content)> generatedSources)
     {
-        this.Initialize(inputFilePath, generatedSources);
+        this.Initialize(new [] { inputFilePath }, generatedSources);
     }
 
-    private void Initialize(string inputFilePath, IList<(string BaseName, string Content)> generatedSources)
+    public VerifyGeneratorHelper(IEnumerable<string> inputFiles, IEnumerable<(string BaseName, string Content)> generatedSources)
     {
-        this.TestState.Sources.Add(VerifyGeneratorHelper.LoadSourceFromFile(inputFilePath));
+        this.Initialize(inputFiles, generatedSources);
+    }
+
+    protected void Initialize(IEnumerable<string> inputFilePaths, IEnumerable<(string BaseName, string Content)> generatedSources)
+    {
+        this.TestState.Sources.Add(inputFilePaths.Select((f) =>
+        {
+            var source = SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile(f));
+            return (Path.GetFileNameWithoutExtension(f), source);
+        }));
 
         foreach (var generatedSourceName in generatedSources)
         {
