@@ -24,7 +24,7 @@ internal class WrapperGenerator
     // "Constants" that are emited mulitple times
     private static readonly string FQ_RESOURCE_LOADER = "global::Microsoft.Windows.ApplicationModel.Resources.ResourceLoader";
     private static readonly string EDITOR_BROWSER_ATTRIBUTE = "[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]";
-    
+
     private readonly OutputWriter writer = new OutputWriter();
     private readonly string fullyQualifiedTargetNamespace;
     private readonly string accessModifier = "internal";
@@ -32,13 +32,13 @@ internal class WrapperGenerator
     private readonly string selfVersion = typeof(WrapperGenerator).Assembly.GetName().Version.ToString();
     private readonly string nullableSuffix;
 
-    internal WrapperGenerator(string targetNamespace, string? version = null, NullableState nullableState = NullableState.Enabled)
+    internal WrapperGenerator(string targetNamespace, NullableState nullableState = NullableState.Enabled, string? version = null)
     {
         this.fullyQualifiedTargetNamespace = targetNamespace;
 
         // Allow the version to be overriden for testing (So that the value is
         // stable over time, and doesn't change the test-validation hash)
-        if(!String.IsNullOrEmpty(version))
+        if (!String.IsNullOrEmpty(version))
         {
             selfVersion = version!;
         }
@@ -61,13 +61,13 @@ internal class WrapperGenerator
         var reswXml = new XmlDocument();
         reswXml.LoadXml(reswContents);
 
-        if(reswXml.DocumentElement == null)
+        if (reswXml.DocumentElement == null)
         {
             return String.Empty;
         }
 
         var dataElements = reswXml.SelectNodes("//data");
-        if(dataElements is null || dataElements.Count == 0)
+        if (dataElements is null || dataElements.Count == 0)
         {
             return string.Empty;
         }
@@ -79,14 +79,14 @@ internal class WrapperGenerator
         foreach (XmlNode n in dataElements)
         {
             XmlElement? element = n as XmlElement;
-            if(element is null || !element.HasAttribute("name"))
+            if (element is null || !element.HasAttribute("name"))
             {
                 continue;
             }
 
             var resourceName = element.GetAttribute("name");
             var segments = resourceName.Split('.');
-            if(segments.Length > 1)
+            if (segments.Length > 1)
             {
                 WrapperGenerator.ProcessNestedResource(segments, parsedResources);
                 continue;
@@ -116,7 +116,7 @@ internal class WrapperGenerator
         var propertyName = nameParts.Last(); // Actual resource name
         var segments = nameParts.Take(nameParts.Length - 1); // prefix path
 
-        foreach(var segment in segments)
+        foreach (var segment in segments)
         {
             // Create a new container if we don't already have one
             rootContainer.Children.TryGetValue(segment, out var childContainer);
@@ -148,12 +148,12 @@ internal class WrapperGenerator
         // We only need to write the lazy-init property if we're accessing the
         // resource map directly. If we're contained in a larger context, we can
         // just use the already-defined-in-scope one.
-        if(!String.IsNullOrEmpty(resourceMapName))
+        if (!String.IsNullOrEmpty(resourceMapName))
         {
             this.WriteResourceLoaderLazyProperty(resourceMapName);
         }
 
-        foreach(var resource in resourceContainer.Resources)
+        foreach (var resource in resourceContainer.Resources)
         {
             var propertyName = resource.Key;
 
@@ -166,7 +166,7 @@ internal class WrapperGenerator
             // can't be compiled.
             //
             // So, suffix the property name with _Resource
-            if(resourceContainer.Children.ContainsKey(resource.Key))
+            if (resourceContainer.Children.ContainsKey(resource.Key))
             {
                 propertyName = $"{propertyName}_Resource";
             }
@@ -223,11 +223,11 @@ internal class WrapperGenerator
         this.writer.Indent();
 
         var isDefaultResourceMap = String.Equals(resourceMapName, "Resources", StringComparison.InvariantCultureIgnoreCase);
-        this.writer.WriteLine($"resourceLoader = new {FQ_RESOURCE_LOADER}({ (isDefaultResourceMap ? "" : $"\"{resourceMapName}\"") });");
-        
+        this.writer.WriteLine($"resourceLoader = new {FQ_RESOURCE_LOADER}({(isDefaultResourceMap ? "" : $"\"{resourceMapName}\"")});");
+
         this.writer.Dindent();
         this.writer.WriteLine("}");
-        
+
         this.writer.WriteLine("return resourceLoader;");
         this.writer.Dindent();
         this.writer.WriteLine("}");

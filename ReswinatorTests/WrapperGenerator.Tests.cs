@@ -8,7 +8,7 @@ namespace Codevoid.Test.Reswinator;
 
 public class WrapperGeneratorTests
 {
-    private readonly WrapperGenerator generator = new WrapperGenerator("Codevoid.Test.Generated", "0.0.0.0");
+    private readonly WrapperGenerator generator = new WrapperGenerator("Codevoid.Test.Generated", NullableState.Enabled, "0.0.0.0");
     private readonly ITestOutputHelper output;
 
     public WrapperGeneratorTests(ITestOutputHelper output) => this.output = output;
@@ -20,7 +20,7 @@ public class WrapperGeneratorTests
 
     private void WriteOutputForTest(string contents, [CallerMemberName] string name = "")
     {
-        var dir = Directory.CreateDirectory("output");;
+        var dir = Directory.CreateDirectory("output"); ;
         File.WriteAllText($"{dir}/{name}.cs", contents);
     }
 
@@ -56,7 +56,7 @@ public class WrapperGeneratorTests
     [Fact]
     public void GeneratingWithSingleItemNullableDisabledMatchesExpectedOutput()
     {
-        var alternativeGenerator = new WrapperGenerator("Codevoid.Test.Generated.NullableDisabled", "0.0.0.0", NullableState.Disabled);
+        var alternativeGenerator = new WrapperGenerator("Codevoid.Test.Generated.NullableDisabled", NullableState.Disabled, "0.0.0.0");
         var wrapperSource = alternativeGenerator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "Resources");
         this.WriteOutputForTest(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
