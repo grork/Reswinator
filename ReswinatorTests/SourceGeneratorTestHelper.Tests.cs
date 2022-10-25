@@ -42,15 +42,6 @@ public class SampleGeneratorTests
     }
 
     [Fact]
-    public async void CanVerifyBasicCompilationWithSampleGeneratorSouceFromFile()
-    {
-
-        var f = new VerifyGeneratorHelper<SampleGenerator>("SimpleSourceFile_notnullable.cs.txt",
-                                                           new List<string>() { SampleGenerator.SAMPLE_FILENAME });
-        await f.RunAsync();
-    }
-
-    [Fact]
     public async void CanVerifyBasicCompilationWithSampleGeneratorWithNullablesEnabledReportingError()
     {
         var f = new VerifyGeneratorHelper<SampleGenerator>("SimpleSourceFile_nullable.cs.txt",

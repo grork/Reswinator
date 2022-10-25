@@ -29,20 +29,11 @@ internal class WrapperGenerator
     private readonly string fullyQualifiedTargetNamespace;
     private readonly string accessModifier = "internal";
     private readonly string selfFullyQualifiedTypeName = typeof(WrapperGenerator).FullName;
-    private readonly string selfVersion = typeof(WrapperGenerator).Assembly.GetName().Version.ToString();
     private readonly string nullableSuffix;
 
-    internal WrapperGenerator(string targetNamespace, NullableState nullableState = NullableState.Enabled, string? version = null)
+    internal WrapperGenerator(string targetNamespace, NullableState nullableState = NullableState.Enabled)
     {
         this.fullyQualifiedTargetNamespace = targetNamespace;
-
-        // Allow the version to be overriden for testing (So that the value is
-        // stable over time, and doesn't change the test-validation hash)
-        if (!String.IsNullOrEmpty(version))
-        {
-            selfVersion = version!;
-        }
-
         this.nullableSuffix = (nullableState == NullableState.Enabled) ? "?" : "";
     }
 
@@ -98,7 +89,6 @@ internal class WrapperGenerator
         }
 
         this.StartNamespace();
-        this.writer.WriteLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{this.selfFullyQualifiedTypeName}\", \"{this.selfVersion}\")]");
         this.WriteResourceContainer(parsedResources, resourceMapName, resourceMapName);
         this.EndNamespace();
 

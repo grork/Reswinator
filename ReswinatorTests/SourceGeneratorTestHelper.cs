@@ -35,19 +35,6 @@ internal class VerifyGeneratorHelper<TSourceGenerator> : CSharpSourceGeneratorTe
         this.Initialize(inputFilePath, generatedSources);
     }
 
-    public VerifyGeneratorHelper(string inputFilePath, IList<string> generatedSourceNames)
-    {
-        // Convert the files into files + content by loading the content from the
-        // samples folder.
-        var withContent = generatedSourceNames.Select<string, (string, string)>((s) =>
-        {
-            var content = VerifyGeneratorHelper.LoadSourceFromFile($"{s}.cs.txt");
-            return (s, content);
-        }).ToList();
-
-        this.Initialize(inputFilePath, withContent);
-    }
-
     private void Initialize(string inputFilePath, IList<(string BaseName, string Content)> generatedSources)
     {
         this.TestState.Sources.Add(VerifyGeneratorHelper.LoadSourceFromFile(inputFilePath));

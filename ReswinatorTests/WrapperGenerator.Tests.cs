@@ -8,7 +8,7 @@ namespace Codevoid.Test.Reswinator;
 
 public class WrapperGeneratorTests
 {
-    private readonly WrapperGenerator generator = new WrapperGenerator("Codevoid.Test.Generated", NullableState.Enabled, "0.0.0.0");
+    private readonly WrapperGenerator generator = new WrapperGenerator("Codevoid.Test.Generated", NullableState.Enabled);
     private readonly ITestOutputHelper output;
 
     public WrapperGeneratorTests(ITestOutputHelper output) => this.output = output;
@@ -18,7 +18,7 @@ public class WrapperGeneratorTests
         return File.ReadAllText(filename);
     }
 
-    private void WriteOutputForTest(string contents, [CallerMemberName] string name = "")
+    private void TraceOutputToDisk(string contents, [CallerMemberName] string name = "")
     {
         var dir = Directory.CreateDirectory("output"); ;
         File.WriteAllText($"{dir}/{name}.cs", contents);
@@ -48,54 +48,54 @@ public class WrapperGeneratorTests
     public void GeneratingWithSingleItemMatchesExpectedOutput()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "Resources");
-        this.WriteOutputForTest(wrapperSource);
+        this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("BAC4898722D4163702CE2BD86C106781B4087CEACF11E2B97D69D73B51743193", hashOfContents);
+        this.AssertHashesMatch("571742A82C61A86C2C11B191DBDC35D6E72AFAD3C4F926806E2FA056377F630B", hashOfContents);
     }
 
     [Fact]
     public void GeneratingWithSingleItemNullableDisabledMatchesExpectedOutput()
     {
-        var alternativeGenerator = new WrapperGenerator("Codevoid.Test.Generated.NullableDisabled", NullableState.Disabled, "0.0.0.0");
+        var alternativeGenerator = new WrapperGenerator("Codevoid.Test.Generated.NullableDisabled", NullableState.Disabled);
         var wrapperSource = alternativeGenerator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "Resources");
-        this.WriteOutputForTest(wrapperSource);
+        this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("BC498448988C4D5C46A8BEA8618357BDFB300880C43472B0B369C644F5139D6B", hashOfContents);
+        this.AssertHashesMatch("756FA8ECF7467D7D646788E7844F305CB94DC6A83E910F2772D28F960B3070B3", hashOfContents);
     }
 
     [Fact]
     public void GeneratingWithSingleItemMatchesExpectedOutputNonDefaultResourceMap()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "CustomResourceMap");
-        this.WriteOutputForTest(wrapperSource);
+        this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("74B9E505D565C25C0428B3204A852B65B7F6EC14BA77A6021A57F8B7406A6C79", hashOfContents);
+        this.AssertHashesMatch("109127C78351E48B6F91C08AF00438FB91A5C08009C146780E59FFE1311C717E", hashOfContents);
     }
 
     [Fact]
     public void GeneratingForMultipleItemsMatchesExpectedOutput()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
-        this.WriteOutputForTest(wrapperSource);
+        this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("3EC1174921E5D09203EF2399EDFD9F0A152BFF8842EA519CB3546FDA817E1BA9", hashOfContents);
+        this.AssertHashesMatch("E51DCDBDCF149676938DD870CDB98ABF417881295A1534416DF4AF5D36317F60", hashOfContents);
     }
 
     [Fact]
     public void GeneratingForMultipleItemsMatchesExpectedOutputNonDefaultResourceMap()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "CustomResourceMap");
-        this.WriteOutputForTest(wrapperSource);
+        this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("84DDD5C965E918D733E22F481AAC0B7C0E0925A4E77BAAD480EDD0A1ECC0D8BC", hashOfContents);
+        this.AssertHashesMatch("D15EFEE1088BCB2893721EE1C5E9DEBDA7EE18E587816782EEDA17263DC940DF", hashOfContents);
     }
 
     [Fact]
     public void GeneratingWithNestedResourcesMatchesExpectedOutput()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/NestedResources.resw"), "Resources");
-        this.WriteOutputForTest(wrapperSource);
+        this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("82FB19DF61BABA0565704EDF84DECDC67EA2FEA67EAD43111FDD9CD1C39C4C55", hashOfContents);
+        this.AssertHashesMatch("B76813765A506E652F11FC35565D5E61FDFB1BA18F98C14F48783029BCCF232B", hashOfContents);
     }
 }
