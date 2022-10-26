@@ -17,6 +17,10 @@ namespace Codevoid.Test.Reswinator
 
     public class SourceGeneratorTests
     {
+        /// <summary>
+        /// Simplifies consistent injection of the Resource mock into the test
+        /// hepler.
+        /// </summary>
         private class ReswinatorVerifyHelper : VerifyGeneratorHelper<SourceGenerator>
         {
             public ReswinatorVerifyHelper(string inputFile, IEnumerable<(string BaseName, string Content)> generatedSources) : base(new String[] { WinSDKResourceMockFileName, inputFile }, generatedSources)
