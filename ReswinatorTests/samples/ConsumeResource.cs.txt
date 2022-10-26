@@ -1,0 +1,9 @@
+namespace ReswinatorTests;
+
+public class ConsumesResources
+{
+    public void DoSomethingWithResource()
+    {
+        System.Console.WriteLine(Sample.Resources.SampleString);
+    }
+}

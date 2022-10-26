@@ -52,6 +52,15 @@ namespace Codevoid.Test.Reswinator
         }
 
         [Fact]
+        public async void NoResourceFilesCompiles()
+        {
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               new List<(string, string)>());
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
         public async void CanVerifyBasicCompilation()
         {
             var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
@@ -97,6 +106,83 @@ namespace Codevoid.Test.Reswinator
                 NullableOption = NullableContextOptions.Enable,
                 TestState = { AdditionalFiles = { reswFiles } }
             };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void VerifyMultipleResourcesSingleFileNotNullable()
+        {
+            var reswFiles = GetReswContents(new[] { "MultipleResources.resw" });
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+            {
+                TestState = { AdditionalFiles = { reswFiles } }
+            };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void VerifyMultipleResourcesSingleFileNullable()
+        {
+            var reswFiles = GetReswContents(new [] { "MultipleResources.resw" });
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
+            {
+                NullableOption = NullableContextOptions.Enable,
+                TestState = { AdditionalFiles = { reswFiles } }
+            };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void VerifyMultipleResourcesMultipleFilesNotNullable()
+        {
+            var reswFiles = GetReswContents(new[] { "MultipleResources.resw", "SingleResource.resw" });
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+            {
+                TestState = { AdditionalFiles = { reswFiles } }
+            };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void VerifyMultipleResourcesMultipleFilesNullable()
+        {
+            var reswFiles = GetReswContents(new [] { "MultipleResources.resw", "SingleResource.resw" });
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
+            {
+                NullableOption = NullableContextOptions.Enable,
+                TestState = { AdditionalFiles = { reswFiles } }
+            };
+
+            await verifier.RunAsync();
+        }
+
+
+        [Fact]
+        public async void CanReferenceKnownResourcesDefaultName()
+        {
+            var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
+            var verifier = new ReswinatorVerifyHelper("ConsumeResource.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+            { TestState = { AdditionalFiles = { reswFiles } } };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void CanReferenceKnownResourcesNonDefaultName()
+        {
+            var reswFiles = GetReswContents(new[] { "SingleResource.resw" });
+            var verifier = new ReswinatorVerifyHelper("ConsumeSingleResource.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+            { TestState = { AdditionalFiles = { reswFiles } } };
 
             await verifier.RunAsync();
         }
