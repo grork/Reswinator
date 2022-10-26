@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Codevoid.Utilities.Reswinator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
@@ -24,10 +23,17 @@ namespace Codevoid.Test.Reswinator
         private class ReswinatorVerifyHelper : VerifyGeneratorHelper<SourceGenerator>
         {
             public ReswinatorVerifyHelper(string inputFile, IEnumerable<(string BaseName, string Content)> generatedSources) : base(new String[] { WinSDKResourceMockFileName, inputFile }, generatedSources)
-            { }
+            {
+            }
         }
 
         private static readonly string WinSDKResourceMockFileName = "WinSDKResourceMock.cs.txt";
+        private static readonly string DefaultNamespace = "Sample";
+        private static readonly (string, string) DefaultBuildConfig = VerifyGeneratorHelper.GlobalConfigFor(new()
+        {
+            { SourceGenerator.NAMESPACE_BUILD_PROPERTY, "Sample"}
+        });
+
         private static IEnumerable<(string Name, SourceText Contents)> GetReswContents(IEnumerable<string> reswFiles)
         {
             return reswFiles.Select((rf) =>
@@ -55,7 +61,10 @@ namespace Codevoid.Test.Reswinator
         public async void NoResourceFilesCompiles()
         {
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
-                                               new List<(string, string)>());
+                                               new List<(string, string)>())
+            {
+                TestState = { AnalyzerConfigFiles = { DefaultBuildConfig } }
+            };
 
             await verifier.RunAsync();
         }
@@ -65,8 +74,8 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
-            { TestState = { AdditionalFiles = { reswFiles } } };
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
+            { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } } };
 
             await verifier.RunAsync();
         }
@@ -76,8 +85,8 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = GetReswContents(new [] { "SingleResource.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
-            { TestState = { AdditionalFiles = { reswFiles } } };
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
+            { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } } };
 
             await verifier.RunAsync();
         }
@@ -87,10 +96,10 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, DefaultNamespace))
             {
                 NullableOption = NullableContextOptions.Enable,
-                TestState = { AdditionalFiles = { reswFiles } }
+                TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } }
             };
 
             await verifier.RunAsync();
@@ -101,10 +110,10 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = GetReswContents(new [] { "SingleResource.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, DefaultNamespace))
             {
                 NullableOption = NullableContextOptions.Enable,
-                TestState = { AdditionalFiles = { reswFiles } }
+                TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } }
             };
 
             await verifier.RunAsync();
@@ -115,9 +124,9 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = GetReswContents(new[] { "MultipleResources.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
             {
-                TestState = { AdditionalFiles = { reswFiles } }
+                TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } }
             };
 
             await verifier.RunAsync();
@@ -128,50 +137,50 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = GetReswContents(new [] { "MultipleResources.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, DefaultNamespace))
             {
                 NullableOption = NullableContextOptions.Enable,
-                TestState = { AdditionalFiles = { reswFiles } }
+                TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } }
             };
 
             await verifier.RunAsync();
         }
 
-        [Fact]
+        [Fact(Skip = "Intermittent due to test library concurrency issue")]
         public async void VerifyMultipleResourcesMultipleFilesNotNullable()
         {
             var reswFiles = GetReswContents(new[] { "MultipleResources.resw", "SingleResource.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
             {
-                TestState = { AdditionalFiles = { reswFiles } }
+                TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } }
             };
 
             await verifier.RunAsync();
         }
 
-        [Fact]
+        [Fact(Skip = "Intermittent due to test library concurrency issue")]
         public async void VerifyMultipleResourcesMultipleFilesNullable()
         {
             var reswFiles = GetReswContents(new [] { "MultipleResources.resw", "SingleResource.resw" });
+
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
                                                GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
             {
                 NullableOption = NullableContextOptions.Enable,
-                TestState = { AdditionalFiles = { reswFiles } }
+                TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } }
             };
 
             await verifier.RunAsync();
         }
-
 
         [Fact]
         public async void CanReferenceKnownResourcesDefaultName()
         {
             var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
             var verifier = new ReswinatorVerifyHelper("ConsumeResource.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
-            { TestState = { AdditionalFiles = { reswFiles } } };
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
+            { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } } };
 
             await verifier.RunAsync();
         }
@@ -181,8 +190,32 @@ namespace Codevoid.Test.Reswinator
         {
             var reswFiles = GetReswContents(new[] { "SingleResource.resw" });
             var verifier = new ReswinatorVerifyHelper("ConsumeSingleResource.cs.txt",
-                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
+            { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } } };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void NoAvailableNamespaceUsesDefaultName()
+        {
+            var reswFiles = GetReswContents(new [] { "SingleResource.resw" });
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "GeneratedResources"))
             { TestState = { AdditionalFiles = { reswFiles } } };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void NamespaceFromBuildConfigReflectedCorrectly()
+        {
+            var TARGET_NAMESPACE = "MagicNamespace";
+            var reswFiles = GetReswContents(new [] { "SingleResource.resw" });
+            var buildConfig = VerifyGeneratorHelper.GlobalConfigFor(new() { { SourceGenerator.NAMESPACE_BUILD_PROPERTY, TARGET_NAMESPACE } });
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, TARGET_NAMESPACE))
+            { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { buildConfig } } };
 
             await verifier.RunAsync();
         }
