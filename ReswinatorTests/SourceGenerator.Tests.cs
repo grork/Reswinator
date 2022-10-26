@@ -28,7 +28,7 @@ namespace Codevoid.Test.Reswinator
         }
 
         private static readonly string WinSDKResourceMockFileName = "WinSDKResourceMock.cs.txt";
-        private static IEnumerable<(string, SourceText)> GetReswContents(IEnumerable<string> reswFiles)
+        private static IEnumerable<(string Name, SourceText Contents)> GetReswContents(IEnumerable<string> reswFiles)
         {
             return reswFiles.Select((rf) =>
             {
@@ -54,6 +54,17 @@ namespace Codevoid.Test.Reswinator
         [Fact]
         public async void CanVerifyBasicCompilation()
         {
+            var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
+            { TestState = { AdditionalFiles = { reswFiles } } };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void CanVerifyNonDefaultNameBasicCompilation()
+        {
             var reswFiles = GetReswContents(new [] { "SingleResource.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
                                                GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, "Sample"))
@@ -64,6 +75,20 @@ namespace Codevoid.Test.Reswinator
 
         [Fact]
         public async void CanVerifyBasicCompilationNullableEnabled()
+        {
+            var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
+                                               GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, "Sample"))
+            {
+                NullableOption = NullableContextOptions.Enable,
+                TestState = { AdditionalFiles = { reswFiles } }
+            };
+
+            await verifier.RunAsync();
+        }
+
+        [Fact]
+        public async void CanVerifyNonDefaultNameBasicCompilationNullableEnabled()
         {
             var reswFiles = GetReswContents(new [] { "SingleResource.resw" });
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
@@ -77,4 +102,3 @@ namespace Codevoid.Test.Reswinator
         }
     }
 }
-
