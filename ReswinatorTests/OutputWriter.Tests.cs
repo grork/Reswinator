@@ -75,4 +75,13 @@ public class OutputWriterTests
         this.writer.NewLine();
         Assert.Equal("\n", this.writer.GetOutput());
     }
+
+    [Fact]
+    public void GettingOutputResetsOutput()
+    {
+        this.writer.WriteLine("Hello");
+        Assert.Equal("Hello\n", this.writer.GetOutput());
+
+        Assert.Empty(this.writer.GetOutput());
+    }
 }

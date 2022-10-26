@@ -7,7 +7,12 @@ public class OutputWriter
     private StringBuilder builder = new StringBuilder();
     private uint indentLevel = 0;
 
-    public string GetOutput() => builder.ToString();
+    public string GetOutput()
+    {
+        var output = builder.ToString();
+        builder.Length = 0;
+        return output;
+    }
 
     public void Indent()
     {

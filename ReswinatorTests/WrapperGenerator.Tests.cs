@@ -73,7 +73,7 @@ public class WrapperGeneratorTests
     }
 
     [Fact]
-    public void GeneratingForMultipleItemsMatchesExpectedOutput()
+    public void GeneratingForMultipleResourcesMatchesExpectedOutput()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
         this.TraceOutputToDisk(wrapperSource);
@@ -82,7 +82,7 @@ public class WrapperGeneratorTests
     }
 
     [Fact]
-    public void GeneratingForMultipleItemsMatchesExpectedOutputNonDefaultResourceMap()
+    public void GeneratingForMultipleResourcesMatchesExpectedOutputNonDefaultResourceMap()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "CustomResourceMap");
         this.TraceOutputToDisk(wrapperSource);
@@ -97,5 +97,19 @@ public class WrapperGeneratorTests
         this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
         this.AssertHashesMatch("B76813765A506E652F11FC35565D5E61FDFB1BA18F98C14F48783029BCCF232B", hashOfContents);
+    }
+
+    [Fact]
+    public void GeneratingForMultipleFilesWithSingleGenerator()
+    {
+        var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
+        this.TraceOutputToDisk(wrapperSource);
+        var hashOfContents = this.HashContents(wrapperSource);
+        this.AssertHashesMatch("E51DCDBDCF149676938DD870CDB98ABF417881295A1534416DF4AF5D36317F60", hashOfContents);
+
+        wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
+        this.TraceOutputToDisk(wrapperSource);
+        hashOfContents = this.HashContents(wrapperSource);
+        this.AssertHashesMatch("E51DCDBDCF149676938DD870CDB98ABF417881295A1534416DF4AF5D36317F60", hashOfContents);
     }
 }
