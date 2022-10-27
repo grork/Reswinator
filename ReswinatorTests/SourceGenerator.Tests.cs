@@ -39,7 +39,7 @@ namespace Codevoid.Test.Reswinator
             return reswFiles.Select((rf) =>
             {
                 var contents = VerifyGeneratorHelper.LoadSourceFromFile(rf);
-                return (rf, SourceText.From(contents, Encoding.UTF8));
+                return ($"Strings\\en-us\\{rf}", SourceText.From(contents, Encoding.UTF8));
             });
         }
 
@@ -72,7 +72,7 @@ namespace Codevoid.Test.Reswinator
         [Fact]
         public async void CanVerifyBasicCompilation()
         {
-            var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
+            var reswFiles = new[] { ("Strings\\en-us\\Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
                                                GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
             { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } } };
@@ -94,7 +94,7 @@ namespace Codevoid.Test.Reswinator
         [Fact]
         public async void CanVerifyBasicCompilationNullableEnabled()
         {
-            var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
+            var reswFiles = new[] { ("Strings\\en-us\\Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
             var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_nullable.cs.txt",
                                                GetGeneratedOutputForFiles(reswFiles, NullableState.Enabled, DefaultNamespace))
             {
@@ -177,7 +177,7 @@ namespace Codevoid.Test.Reswinator
         [Fact]
         public async void CanReferenceKnownResourcesDefaultName()
         {
-            var reswFiles = new[] { ("Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
+            var reswFiles = new[] { ("Strings\\en-us\\Resources.resw", SourceText.From(VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw"), Encoding.UTF8)) };
             var verifier = new ReswinatorVerifyHelper("ConsumeResource.cs.txt",
                                                GetGeneratedOutputForFiles(reswFiles, NullableState.Disabled, DefaultNamespace))
             { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { DefaultBuildConfig } } };

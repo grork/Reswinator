@@ -29,7 +29,7 @@ public class OutputWriterTests
     public void WritingLineAddsToOutput()
     {
         this.writer.WriteLine("Hello");
-        Assert.Equal("Hello\n", this.writer.GetOutput());
+        Assert.Equal($"Hello{Environment.NewLine}", this.writer.GetOutput());
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class OutputWriterTests
     {
         this.writer.Indent();
         this.writer.WriteLine("Hello");
-        Assert.Equal("    Hello\n", this.writer.GetOutput());
+        Assert.Equal($"    Hello{Environment.NewLine}", this.writer.GetOutput());
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class OutputWriterTests
         this.writer.Indent();
         this.writer.Indent();
         this.writer.WriteLine("Hello");
-        Assert.Equal("        Hello\n", this.writer.GetOutput());
+        Assert.Equal($"        Hello{Environment.NewLine}", this.writer.GetOutput());
     }
 
     [Fact]
@@ -58,14 +58,14 @@ public class OutputWriterTests
         this.writer.Dindent();
         this.writer.Dindent();
         this.writer.WriteLine("World");
-        Assert.Equal("        Hello\nWorld\n", this.writer.GetOutput());
+        Assert.Equal($"        Hello{Environment.NewLine}World{Environment.NewLine}", this.writer.GetOutput());
     }
 
     [Fact]
     public void WritingNewLineOnlyAddsOnlyNewLineToOutput()
     {
         this.writer.NewLine();
-        Assert.Equal("\n", this.writer.GetOutput());
+        Assert.Equal(Environment.NewLine, this.writer.GetOutput());
     }
 
     [Fact]
@@ -73,14 +73,14 @@ public class OutputWriterTests
     {
         this.writer.Indent();
         this.writer.NewLine();
-        Assert.Equal("\n", this.writer.GetOutput());
+        Assert.Equal(Environment.NewLine, this.writer.GetOutput());
     }
 
     [Fact]
     public void GettingOutputResetsOutput()
     {
         this.writer.WriteLine("Hello");
-        Assert.Equal("Hello\n", this.writer.GetOutput());
+        Assert.Equal($"Hello{Environment.NewLine}", this.writer.GetOutput());
 
         Assert.Empty(this.writer.GetOutput());
     }

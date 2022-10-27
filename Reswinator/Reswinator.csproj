@@ -8,6 +8,13 @@
 		<LangVersion>10.0</LangVersion>
 		<ImplicitUsings>true</ImplicitUsings>
 		<Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- Spurious error because IncludeBuildOutput for Source Generators
+         confuses the nuget packing tooling for the target framework. This
+         supresses that warning so we can pack the package -->
+    <WarningsNotAsErrors>NU5128</WarningsNotAsErrors>
+    <NoWarn>1701;1702;NU5128</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
@@ -19,4 +26,9 @@
 	<ItemGroup>
 		<Using Include="Microsoft.CodeAnalysis" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="Codevoid.Utilities.Reswinator.props" Pack="true" PackagePath="build" />
+  </ItemGroup>
 </Project>

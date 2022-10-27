@@ -26,6 +26,9 @@ public class WrapperGeneratorTests
 
     private string HashContents(string toHash)
     {
+        // Make the output consistent across windows + other platforms by
+        // normalizing the line endings
+        toHash = toHash.Replace("\r\n", "\n");
         var sha = SHA256.Create();
         var hash = sha.ComputeHash(new MemoryStream(Encoding.UTF8.GetBytes(toHash)));
         return Convert.ToHexString(hash);
