@@ -72,7 +72,7 @@ public class WrapperGeneratorTests
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "CustomResourceMap");
         this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("109127C78351E48B6F91C08AF00438FB91A5C08009C146780E59FFE1311C717E", hashOfContents);
+        this.AssertHashesMatch("59E08A0544BD61A11823F269815C5B4C47911379E681B5B018560BFADC29AF4F", hashOfContents);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class WrapperGeneratorTests
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "CustomResourceMap");
         this.TraceOutputToDisk(wrapperSource);
         var hashOfContents = this.HashContents(wrapperSource);
-        this.AssertHashesMatch("D15EFEE1088BCB2893721EE1C5E9DEBDA7EE18E587816782EEDA17263DC940DF", hashOfContents);
+        this.AssertHashesMatch("B1D74E845A7D3E88E3844834D394EA8B77B1142026BB39E9C584FC214829D552", hashOfContents);
     }
 
     [Fact]

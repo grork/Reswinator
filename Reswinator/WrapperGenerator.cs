@@ -213,7 +213,7 @@ internal class WrapperGenerator
         this.writer.Indent();
 
         var isDefaultResourceMap = String.Equals(resourceMapName, "Resources", StringComparison.InvariantCultureIgnoreCase);
-        this.writer.WriteLine($"resourceLoader = new {FQ_RESOURCE_LOADER}({(isDefaultResourceMap ? "" : $"\"{resourceMapName}\"")});");
+        this.writer.WriteLine($"resourceLoader = new {FQ_RESOURCE_LOADER}({(isDefaultResourceMap ? "" : $"\"resources.pri\", \"{resourceMapName}\"")});");
 
         this.writer.Dindent();
         this.writer.WriteLine("}");
