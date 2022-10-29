@@ -11,13 +11,14 @@ public class SourceGenerator : ISourceGenerator
 
     public void Execute(GeneratorExecutionContext context)
     {
-        var defaultLanguage = context.GetBuildProperty(DEFAULT_LANGUAGE_BUILD_PROPERTY, "en-us");
+        var defaultLanguage = context.GetBuildProperty(DEFAULT_LANGUAGE_BUILD_PROPERTY, "en-us").ToLowerInvariant();
         var projectRoot = context.GetBuildProperty(PROJECT_DIRECTORY_BUILD_PROPERTY, String.Empty);
+        var languageCandidates = new[] { $"language-{defaultLanguage}", defaultLanguage };
 
         // Find any resw files that we might process
         var reswFiles = (from f in context.AdditionalFiles
-                         where ShouldGenerateWrapperFor(f.Path, projectRoot, defaultLanguage)
-                         select f).ToList();
+                         where ShouldGenerateWrapperFor(f.Path, projectRoot, languageCandidates)
+                         select f);
 
         // Derive the nullable state so we can emit ?'s if needed.
         var nullableState = (context.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable) ? NullableState.Enabled : NullableState.Disabled;
@@ -32,7 +33,7 @@ public class SourceGenerator : ISourceGenerator
         var wrapperGenerator = new WrapperGenerator(targetNamespace, nullableState);
         foreach (var file in reswFiles)
         {
-            var baseFilename = Path.GetFileNameWithoutExtension(file.Path);
+            var baseFilename = GetResourceNameFromFilename(file.Path, defaultLanguage);
             var contents = wrapperGenerator.GenerateWrapperForResw(file.GetText()!.ToString(), baseFilename);
             context.AddSource(baseFilename, contents);
         }
@@ -46,17 +47,45 @@ public class SourceGenerator : ISourceGenerator
     /// </summary>
     /// <param name="path">Path to inspect</param>
     /// <param name="root">Root of the path</param>
-    /// <param name="language">Language we're looking for</param>
+    /// <param name="languageCandidates">Language qualifiers we're looking for</param>
     /// <returns>True if we should generate a wrapper for this file</returns>
-    private static bool ShouldGenerateWrapperFor(string path, string root, string language)
+    private static bool ShouldGenerateWrapperFor(string path, string root, IEnumerable<string> languageCandidates)
     {
-        if(Path.GetExtension(path) != ".resw")
+        if (Path.GetExtension(path) != ".resw")
         {
             return false;
         }
 
-        var relativePath = (String.IsNullOrEmpty(root) ? path : path.Replace(root, String.Empty));
-        return relativePath.IndexOf(language, StringComparison.OrdinalIgnoreCase) > -1;
+        if (!String.IsNullOrEmpty(root))
+        {
+            path = path.Replace(root, String.Empty);
+        }
+
+        var pathComponents = new Stack<string>(path.Split(Path.DirectorySeparatorChar));
+        var filename = pathComponents.Pop();
+
+        if (filename.Contains(languageCandidates))
+        {
+            return true;
+        }
+
+        while(pathComponents.Count > 0)
+        {
+            var component = pathComponents.Pop();
+            if(languageCandidates.Contains(component.ToLowerInvariant()))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    internal static string GetResourceNameFromFilename(string filename, string language)
+    {
+        filename = filename.Replace($".language-{language}", String.Empty);
+        filename = filename.Replace(language, String.Empty);
+        return Path.GetFileNameWithoutExtension(filename);
     }
 }
 
@@ -70,5 +99,18 @@ internal static class GeneratorExecutionContextExtensions
         }
 
         return storedValue;
+    }
+
+    internal static bool Contains(this string instance, IEnumerable<string> candidates)
+    {
+        foreach (var candidate in candidates)
+        {
+            if (instance.Contains(candidate))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
