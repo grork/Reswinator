@@ -5,7 +5,10 @@ namespace Microsoft.Windows.ApplicationModel.Resources
         public ResourceLoader()
         { }
 
-        public ResourceLoader(string resourceMapName)
+        public ResourceLoader(string priFile)
+        { }
+
+        public ResourceLoader(string priFile, string resourceMap)
         { }
 
         public string GetString(string resourceName)

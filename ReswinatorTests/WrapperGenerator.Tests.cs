@@ -76,6 +76,15 @@ public class WrapperGeneratorTests
     }
 
     [Fact]
+    public void GeneratingWithSingleItemMatchesExpectedOutputNonDefaultResourceMapWithStopsInFileName()
+    {
+        var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/SingleResource.resw"), "Custom.Resource.Map");
+        this.TraceOutputToDisk(wrapperSource);
+        var hashOfContents = this.HashContents(wrapperSource);
+        this.AssertHashesMatch("C194DF5E70C7DF93A40B2C9FC70C0FEC48CF9119E4B39166BC4E75B8F368E060", hashOfContents);
+    }
+
+    [Fact]
     public void GeneratingForMultipleResourcesMatchesExpectedOutput()
     {
         var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
@@ -110,9 +119,23 @@ public class WrapperGeneratorTests
         var hashOfContents = this.HashContents(wrapperSource);
         this.AssertHashesMatch("E51DCDBDCF149676938DD870CDB98ABF417881295A1534416DF4AF5D36317F60", hashOfContents);
 
-        wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
+        wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources2");
         this.TraceOutputToDisk(wrapperSource);
         hashOfContents = this.HashContents(wrapperSource);
+        this.AssertHashesMatch("6CAAA147B5627977EFC4ED5662BEE109C2DBC92FE1F410DB8D8C087B6E7CB0EC", hashOfContents);
+    }
+
+    [Fact]
+    public void GeneratingForMultipleFilesWithSingleGeneratorResolvingToSameClassName()
+    {
+        var wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Resources");
+        this.TraceOutputToDisk(wrapperSource);
+        var hashOfContents = this.HashContents(wrapperSource);
         this.AssertHashesMatch("E51DCDBDCF149676938DD870CDB98ABF417881295A1534416DF4AF5D36317F60", hashOfContents);
+
+        wrapperSource = generator.GenerateWrapperForResw(this.ReadContentsFor("samples/MultipleResources.resw"), "Res.our.ces");
+        this.TraceOutputToDisk(wrapperSource, $"{nameof(GeneratingForMultipleFilesWithSingleGeneratorResolvingToSameClassName)}_second.cs");
+        hashOfContents = this.HashContents(wrapperSource);
+        this.AssertHashesMatch("B722E86DC1B02C85A30E59C1175F0081DD848D8E8E6E05DD009FEE9A277975CF", hashOfContents);
     }
 }

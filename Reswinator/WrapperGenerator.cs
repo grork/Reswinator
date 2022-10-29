@@ -30,6 +30,7 @@ internal class WrapperGenerator
     private readonly string accessModifier = "internal";
     private readonly string selfFullyQualifiedTypeName = typeof(WrapperGenerator).FullName;
     private readonly string nullableSuffix;
+    private readonly IDictionary<string, int> generatedClassNames = new Dictionary<string, int>();
 
     internal WrapperGenerator(string targetNamespace, NullableState nullableState = NullableState.Enabled)
     {
@@ -89,7 +90,18 @@ internal class WrapperGenerator
         }
 
         this.StartNamespace();
-        this.WriteResourceContainer(parsedResources, resourceMapName, resourceMapName);
+        var targetClassName = resourceMapName.Replace(".", string.Empty);
+        if(this.generatedClassNames.TryGetValue(targetClassName, out var alreadyGeneratedCount))
+        {
+            this.generatedClassNames[targetClassName] += 1;
+            targetClassName = $"{targetClassName}{alreadyGeneratedCount}";
+        }
+        else
+        {
+            this.generatedClassNames.Add(targetClassName, 1);
+        }
+
+        this.WriteResourceContainer(parsedResources, targetClassName, resourceMapName);
         this.EndNamespace();
 
         return this.writer.GetOutput();
