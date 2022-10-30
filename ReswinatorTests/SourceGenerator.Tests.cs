@@ -317,5 +317,28 @@ namespace Codevoid.Test.Reswinator
 
             await verifier.RunAsync();
         }
+
+        [Fact]
+        public async void MultipleLanguagesSameResourceNameShouldResolveToOneClass()
+        {
+            var buildConfig = VerifyGeneratorHelper.GlobalConfigFor(new()
+            {
+                { SourceGenerator.NAMESPACE_BUILD_PROPERTY, "Sample" },
+                { SourceGenerator.DEFAULT_LANGUAGE_BUILD_PROPERTY, "en-us" }
+            });
+
+            var reswContent = VerifyGeneratorHelper.LoadSourceFromFile("SingleResource.resw");
+
+            var reswFiles = new[]
+            {
+                ("Strings/en-us/Resources.resw", SourceText.From(reswContent, Encoding.UTF8)),
+                ("Strings/fr-fr/Resources.resw", SourceText.From(reswContent, Encoding.UTF8))
+            };
+            var verifier = new ReswinatorVerifyHelper("SimpleSourceFile_notnullable.cs.txt",
+                                               GetGeneratedOutputForFiles(new []{ reswFiles.First() }, NullableState.Disabled, DefaultNamespace, "en-us"))
+            { TestState = { AdditionalFiles = { reswFiles }, AnalyzerConfigFiles = { buildConfig } } };
+
+            await verifier.RunAsync();
+        }
     }
 }
