@@ -33,6 +33,7 @@ See README.md for usage details.
     <PackageTags>rews Windows WinAppSDK WinUI XAML</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/grork/reswinator/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/grork/reswinator/</RepositoryUrl>
     <Copyright>Dominic Hopton, Copyright 2022</Copyright>
 	</PropertyGroup>
 	<ItemGroup>
