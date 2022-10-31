@@ -4,4 +4,14 @@
     <CompilerVisibleProperty Include="DefaultLanguage" />
     <CompilerVisibleProperty Include="ProjectDir" />
   </ItemGroup>
+
+  <!-- Ensure that the AdditionalFiles item group is populated with items from
+  the PRIResource group. This needs to happen in a targets 'cause the import
+  of this props happens before the PRIResource group is defined. By computing
+  immediately before hand we ensure they're available. -->
+  <Target Name="Rewinator_MapAdditionalFiles" BeforeTargets="CoreCompile;XamlPreCompile" >
+    <ItemGroup>
+      <AdditionalFiles Include="@(PRIResource)" Visible="false" />
+    </ItemGroup>
+  </Target>
 </Project>
