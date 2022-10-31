@@ -43,12 +43,13 @@ See README.md for usage details.
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<Using Include="Microsoft.CodeAnalysis" />
+		<Using Include="Microsoft.CodeAnalysis" Visible="false" />
 	</ItemGroup>
 
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="Codevoid.Utilities.Reswinator.props" Pack="true" PackagePath="build" />
-    <None Include="LICENSE.txt" Pack="true" />
+    <None Include="..\LICENSE.txt" Pack="true" Visible="false" />
+    <None Include="..\README.md" Pack="true" Visible="false" />
   </ItemGroup>
 </Project>
