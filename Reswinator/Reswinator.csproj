@@ -8,13 +8,32 @@
 		<LangVersion>10.0</LangVersion>
 		<ImplicitUsings>true</ImplicitUsings>
 		<Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- Spurious error because IncludeBuildOutput for Source Generators
          confuses the nuget packing tooling for the target framework. This
          supresses that warning so we can pack the package -->
     <WarningsNotAsErrors>NU5128</WarningsNotAsErrors>
     <NoWarn>1701;1702;NU5128</NoWarn>
+
+    <!-- NuGet properties -->
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <PackageId>Codevoid.Utilities.Reswinator</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Dominic Hopton</Authors>
+    <Company>Codevoid</Company>
+    <Description>
+Turn your Windows App SDK resw files into strongly typed wrappers. No more typoed resource names causing odd behaviour!
+      
+This is a C# Source Generator, and only supports generating C#.
+      
+See README.md for usage details.
+    </Description>
+
+    <Title>Reswinator</Title>
+    <PackageTags>rews Windows WinAppSDK WinUI XAML</PackageTags>
+    <License>https://github.com/grork/reswinator/blob/master/LICENSE.txt</License>
+    <PackageProjectUrl>https://github.com/grork/reswinator/</PackageProjectUrl>
+    <Copyright>Dominic Hopton, Copyright 2022</Copyright>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3">
@@ -30,5 +49,6 @@
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="Codevoid.Utilities.Reswinator.props" Pack="true" PackagePath="build" />
+    <None Include="LICENSE.txt" Pack="true" />
   </ItemGroup>
 </Project>
