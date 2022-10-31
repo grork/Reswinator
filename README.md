@@ -36,6 +36,20 @@ and build.
 
 Thats it!
 
+Now you can access you're resources this way:
+```cs
+void DoSomething()
+{
+    myThing.Content = (namespace).Resources.ThingContent;
+}
+```
+
+If you have resources with `.` in them, they'll become nested classes. E.g for
+a key name such as `MyThing.Text`, the class will nest like such:
+```cs
+(namespace).Resources.MyThing.Text
+```
+
 ## Q&A
 
 ### What namespace does it generate the resource class into?
